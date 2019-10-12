@@ -1,3 +1,6 @@
+// Copyright (c) 2019 Martien Oppeneer. 
+// This software is MIT licensed; see LICENSE.MIT. 
+
 #include "telegram_generator.hpp"
 
 #include <iostream>
