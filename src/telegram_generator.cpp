@@ -1,5 +1,5 @@
-// Copyright (c) 2019 Martien Oppeneer. 
-// This software is MIT licensed; see LICENSE.MIT. 
+// Copyright (c) 2019 Martien Oppeneer.
+// This software is MIT licensed; see LICENSE.MIT.
 
 #include "telegram_generator.hpp"
 
@@ -21,7 +21,7 @@ void signal_handler(int signum)
 }
 
 
-TelegramGenerator::TelegramGenerator() 
+ttyTelegramGenerator::ttyTelegramGenerator()
 {
     std::cout << "Opening tty.\n";
 
@@ -29,7 +29,7 @@ TelegramGenerator::TelegramGenerator()
 
     serial_port_ = open("/dev/ttyUSB0", O_RDONLY);
     if (serial_port_ <= 0) {
-        throw std::runtime_error("something went wrong: "); // TODO: add return value in seriap_port 
+        throw std::runtime_error("something went wrong: "); // TODO: add return value in seriap_port
     }
 
     // Read in existing settings, and handle any error
@@ -66,13 +66,13 @@ TelegramGenerator::TelegramGenerator()
 
     // Save tty settings, also checking for error
     if (tcsetattr(serial_port_, TCSANOW, &tty) != 0) {
-        throw std::runtime_error("Error from tcsetattr"); 
+        throw std::runtime_error("Error from tcsetattr");
         //TODO: printf("Error %i from tcsetattr: %s\n", errno, strerror(errno));
     }
 }
 
 
-std::string TelegramGenerator::new_telegram()
+std::string ttyTelegramGenerator::new_telegram()
 {
     keep_running = 1;
 
@@ -104,7 +104,7 @@ std::string TelegramGenerator::new_telegram()
 }
 
 
-TelegramGenerator::~TelegramGenerator()
+ttyTelegramGenerator::~ttyTelegramGenerator()
 {
     // Finishing
     int result = close(serial_port_);

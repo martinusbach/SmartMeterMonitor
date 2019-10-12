@@ -1,5 +1,5 @@
-// Copyright (c) 2019 Martien Oppeneer. 
-// This software is MIT licensed; see LICENSE.MIT. 
+// Copyright (c) 2019 Martien Oppeneer.
+// This software is MIT licensed; see LICENSE.MIT.
 
 #ifndef TELEGRAM_GENERATOR_HPP
 #define TELEGRAM_GENERATOR_HPP
@@ -10,11 +10,33 @@
 class TelegramGenerator
 {
 public:
-    TelegramGenerator(); 
-    ~TelegramGenerator();
-    TelegramGenerator(const TelegramGenerator&) = delete;
+    virtual ~TelegramGenerator() {};
+    virtual std::string new_telegram() = 0;
+};
 
-    std::string new_telegram();
+
+class ttyTelegramGenerator : public TelegramGenerator
+{
+public:
+    ttyTelegramGenerator();
+    ~ttyTelegramGenerator() final;
+    ttyTelegramGenerator(const ttyTelegramGenerator&) = delete;
+
+    virtual std::string new_telegram() final;
+
+private:
+    int serial_port_;
+};
+
+
+class FileTelegramGenerator : public TelegramGenerator
+{
+public:
+    FileTelegramGenerator();
+    ~FileTelegramGenerator() final;
+    FileTelegramGenerator(const FileTelegramGenerator&) = delete;
+
+    virtual std::string new_telegram() final;
 
 private:
     int serial_port_;
