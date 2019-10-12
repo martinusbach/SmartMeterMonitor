@@ -4,6 +4,7 @@
 #ifndef TELEGRAM_GENERATOR_HPP
 #define TELEGRAM_GENERATOR_HPP
 
+#include <fstream>
 #include <string>
 
 
@@ -39,7 +40,7 @@ public:
     virtual std::string new_telegram() final;
 
 private:
-    int serial_port_;
+    std::ifstream telegram_file_;
 };
 
 #endif  // TELEGRAM_GENERATOR_HPP
