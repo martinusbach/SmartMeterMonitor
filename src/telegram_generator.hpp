@@ -16,32 +16,5 @@ public:
 };
 
 
-class ttyTelegramGenerator : public TelegramGenerator
-{
-public:
-    ttyTelegramGenerator();
-    ~ttyTelegramGenerator() final;
-    ttyTelegramGenerator(const ttyTelegramGenerator&) = delete;
-
-    virtual std::string new_telegram() final;
-
-private:
-    int serial_port_;
-};
-
-
-class FileTelegramGenerator : public TelegramGenerator
-{
-public:
-    FileTelegramGenerator();
-    ~FileTelegramGenerator() final;
-    FileTelegramGenerator(const FileTelegramGenerator&) = delete;
-
-    virtual std::string new_telegram() final;
-
-private:
-    std::ifstream telegram_file_;
-};
-
 #endif  // TELEGRAM_GENERATOR_HPP
 

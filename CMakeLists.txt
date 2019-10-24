@@ -5,14 +5,18 @@ cmake_minimum_required(VERSION 3.5)
 
 project(smm CXX)
 
-add_executable(smm 
-    src/smm.cpp
-    src/file_telegram_generator.cpp
-    src/telegram_generator.cpp)
 
+# Deamon 
+add_executable(smm 
+    src/tty_telegram_generator.cpp
+    src/smm.cpp)
+
+
+# Test 
 add_subdirectory(ext_libs/Catch2)
 
 add_executable(test_smm 
+    test/file_telegram_generator.cpp
     test/tests_main.cpp
     test/test_smm.cpp)
 
