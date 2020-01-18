@@ -28,16 +28,22 @@ struct sregex_range : std::pair<std::sregex_iterator, std::sregex_iterator>
 class ObisEntry
 {
 public:
-    ObisEntry() = default;
+    ObisEntry(const std::string& name)
+        : is_parsed_(false)
+        , name_(name)
+    { }
     virtual ~ObisEntry() = default;
     virtual void parse(const std::string& s) = 0;
+protected:
+    bool is_parsed_;
+    std::string name_;
 };
 
 class IntObisEntry : public ObisEntry
 {
 public:
-    IntObisEntry()
-        : ObisEntry()
+    IntObisEntry(const std::string& name)
+        : ObisEntry(name)
         , value_()
     { }
 
@@ -45,6 +51,8 @@ public:
     {
         value_ = std::stoi(s);
         std::cout << "parsed int\n";
+
+        is_parsed_ = true;
     }
 private:
     int value_;
@@ -53,8 +61,9 @@ private:
 class TimestampObisEntry : public ObisEntry
 {
 public:
-    TimestampObisEntry()
-        : year_()
+    TimestampObisEntry(const std::string& name)
+        : ObisEntry(name)
+        , year_()
         , month_()
         , day_()
     { }
@@ -74,6 +83,7 @@ public:
         dst_ = match.str(7)[0];
 
         std::cout << "parsed date " << dst_ << "\n";
+        is_parsed_ = true;
     }
 private:
     int year_;
@@ -88,8 +98,8 @@ private:
 class MeasurementObisEntry : public ObisEntry
 {
 public:
-    MeasurementObisEntry()
-        : ObisEntry()
+    MeasurementObisEntry(const std::string& name)
+        : ObisEntry(name)
         , value_()
     { }
 
@@ -107,6 +117,7 @@ public:
         unit_ = match.str(3);
 
         std::cout << "parsed a measurent: " << value_ << unit_ << ".\n";
+        is_parsed_ = true;
     }
 private:
     double value_;
@@ -123,9 +134,10 @@ TEST_CASE("First parser test", "[parser]")
 
 
     std::map<std::string, std::unique_ptr<ObisEntry>> telegram_entries;
-    telegram_entries.emplace("1-3:0.2.8", std::make_unique<IntObisEntry>());
-    telegram_entries.emplace("0-0:1.0.0", std::make_unique<TimestampObisEntry>());
-    telegram_entries.emplace("1-0:1.8.1", std::make_unique<MeasurementObisEntry>());
+    telegram_entries.emplace("1-3:0.2.8", std::make_unique<IntObisEntry>("version info (S2)"));
+    telegram_entries.emplace("0-0:1.0.0", std::make_unique<TimestampObisEntry>("time stamp"));
+    telegram_entries.emplace("1-0:1.8.1", std::make_unique<MeasurementObisEntry>("tariff 1, to client"));
+    telegram_entries.emplace("1-0:1.8.7123", std::make_unique<MeasurementObisEntry>("test entry"));
 
 
     const std::regex re_header(R"(/([A-Z]{3}\d[A-Z0-9]{16}))");
@@ -147,11 +159,11 @@ TEST_CASE("First parser test", "[parser]")
         std::cout << "\n";
 
         // start parsing
-        if (auto& tg_entry = telegram_entries[obis_id]) {
-            tg_entry ->parse(data);
-        }
-        else {
-            std::cout << "no parse\n";
+        try {
+            auto& tg_entry = telegram_entries.at(obis_id);
+            tg_entry->parse(data);
+        } catch (const std::out_of_range&) {
+            std::cout << "obis id " << obis_id << " not parsed\n";
         }
     }
 
