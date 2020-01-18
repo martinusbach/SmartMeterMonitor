@@ -5,6 +5,9 @@ cmake_minimum_required(VERSION 3.5)
 
 project(smm CXX)
 
+set(CMAKE_CXX_STANDARD 14)
+
+
 
 # Deamon, works only on linux
 if (UNIX)
